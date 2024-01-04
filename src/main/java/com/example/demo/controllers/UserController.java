@@ -28,7 +28,6 @@ public class UserController {
         return ResponseEntity.ok().body(user);
     }
 
-    // ASDASDASDSADS
     @GetMapping("")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();

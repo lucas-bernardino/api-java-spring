@@ -26,7 +26,7 @@ public class TaskService {
     public Task findById(Long id) {
         Optional<Task> task = taskRepository.findById(id);
 
-        return task.orElseThrow(() -> new ObjectNotFoundException("Could not found a task with id " + id ));
+        return task.orElseThrow(() -> new ObjectNotFoundException("Nao foi possivel encontrar tarefa com o id:  " + id ));
     }
 
     public List<Task> findAllByUserID(Long userID) {
@@ -56,7 +56,7 @@ public class TaskService {
         try {
             taskRepository.deleteById(id);
         } catch (Exception e) {
-            throw new DataBindingViolationException("Delete was not possible because there are entities dependencies.");
+            throw new DataBindingViolationException("Nao foi possivel deletar devido a dependencias de entidades.");
         }
     }
 

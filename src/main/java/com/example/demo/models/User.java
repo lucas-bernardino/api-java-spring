@@ -1,5 +1,6 @@
 package com.example.demo.models;
 
+import com.example.demo.models.enums.ProfileEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -8,9 +9,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = User.TABLE_NAME)
@@ -55,5 +55,20 @@ public class User {
     Assim, quando der um post precisa mandar o password normalmente, mas quando for der um get ele não manda o campo
     de password na resposta.
     */
+
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @CollectionTable(name = "user_profile")
+    @Column(name = "profile", nullable = false)
+    private Set<Integer> profiles = new HashSet<>();
+
+    public Set<ProfileEnum> getProfiles() {
+        return profiles.stream().map(x -> ProfileEnum.returnsEnum(x)).collect(Collectors.toSet());
+    }
+
+    public void addProfile(ProfileEnum profileEnum) {
+        profiles.add(profileEnum.getCode());
+    }
 
 }
