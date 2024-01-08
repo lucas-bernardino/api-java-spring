@@ -7,8 +7,12 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,15 +23,57 @@ import java.util.Objects;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class User {
+public class User implements UserDetails {
     public static final String TABLE_NAME = "users";
+
+    public User(String username, String password, UserEnum role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (this.role == UserEnum.ADMIN) {
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        }
+        else {
+            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        }
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
 
     public interface CreateUser {}
     public interface UpdateUser {} // quando atualizar, poderá somente mudar o password e não o username.
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO) // auto-increment
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name="id")
     private Long id;
 
@@ -47,6 +93,14 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Task> task = new ArrayList<Task>();
+
+
+    @Column(name = "role", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @NotNull(groups = CreateUser.class)
+    @NotEmpty(groups = CreateUser.class)
+    private UserEnum role;
 
     /*
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

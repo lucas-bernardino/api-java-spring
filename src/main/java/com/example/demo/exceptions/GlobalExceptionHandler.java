@@ -12,6 +12,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -102,6 +104,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
         log.error("Falha ao salvar dado com elementos associados " + dataBindingViolationException);
 
         return buildErrorResponse(dataBindingViolationException, HttpStatus.CONFLICT, request);
+    }
+
+
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Object> handleInternalAuthenticationServiceException(InternalAuthenticationServiceException internalAuthenticationServiceException, WebRequest webRequest) {
+        String errorMessage = "Falha no login: Usuario nao cadastrado";
+        log.error(errorMessage + internalAuthenticationServiceException);
+
+        return buildErrorResponse(internalAuthenticationServiceException, errorMessage, HttpStatus.NOT_FOUND, webRequest);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException badCredentialsException, WebRequest webRequest) {
+        String errorMessage = "Falha no login: Senha incorreta";
+        log.error(errorMessage + badCredentialsException);
+
+        return buildErrorResponse(badCredentialsException, errorMessage, HttpStatus.UNAUTHORIZED, webRequest);
     }
 
 
