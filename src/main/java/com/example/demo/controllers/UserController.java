@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 
+import com.example.demo.models.RegisterRecord;
 import com.example.demo.models.User;
 import com.example.demo.services.UserService;
 import jakarta.validation.Valid;
@@ -38,11 +39,9 @@ public class UserController {
 
     @PostMapping("")
     @Validated(User.CreateUser.class)
-    public ResponseEntity<Void> create(@Valid @RequestBody User user) {
-        userService.create(user);
-        // seta os headers como, por exemplo, localhost:8080/user/1
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId()).toUri();
-        return ResponseEntity.created(uri).build();
+    public ResponseEntity<Void> create(@Valid @RequestBody RegisterRecord user) {
+        userService.create(new User(user.username(), user.password(), user.role()));
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}")

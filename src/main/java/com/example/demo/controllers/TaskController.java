@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 
+import com.example.demo.models.DescriptionRecord;
 import com.example.demo.models.Task;
 import com.example.demo.models.User;
 import com.example.demo.services.TaskService;
@@ -56,6 +57,32 @@ public class TaskController {
     public ResponseEntity<List<Task>> findAllByUserID(@PathVariable Long userID) {
         List<Task> tasks = taskService.findAllByUserID(userID);
         return ResponseEntity.ok().body(tasks);
+    }
+
+    @GetMapping("/usertask/")
+    public ResponseEntity<List<Task>> findAllTasksFromUser(@RequestHeader("Authorization") String token) {
+        List<Task> tasks = taskService.getAllTasksFromUser(token);
+        return ResponseEntity.ok().body(tasks);
+    }
+
+    @PostMapping("/usertask/")
+    public ResponseEntity<Void> createTaskForUser(@RequestHeader("Authorization") String token, @Valid @RequestBody DescriptionRecord description) {
+        taskService.createTaskForUser(token, description);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/usertask/{taskId}")
+    public ResponseEntity<Void> deleteTaskFromUser(@RequestHeader("Authorization") String token, @PathVariable Long taskId) {
+        taskService.deleteTaskFromUser(token, taskId);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/usertask/{taskId}")
+    public ResponseEntity<Void> updateTaskFromUser(@RequestHeader("Authorization") String token, @PathVariable Long taskId, @Valid @RequestBody DescriptionRecord description) {
+        taskService.updateTaskFromUser(token, taskId, description);
+
+        return ResponseEntity.ok().build();
     }
 
 }

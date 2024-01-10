@@ -18,7 +18,7 @@ public class Task {
     public static final String TABLE_NAME = "tasks";
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
     private Long id;
 
@@ -29,7 +29,7 @@ public class Task {
     @Size(min = 5, max = 255)
     private String description;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id")
     @NotNull
     private User user;

@@ -4,6 +4,7 @@ import com.example.demo.models.User;
 import com.example.demo.repositories.UserRepository;
 import com.example.demo.services.exceptions.DataBindingViolationException;
 import com.example.demo.services.exceptions.ObjectNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,10 +32,11 @@ public class UserService {
         return users;
     }
 
-
     @Transactional
     public User create(User user) {
         user.setId(null);
+        String encryptedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
+        user.setPassword(encryptedPassword);
         user = userRepository.save(user);
         return user;
     }
@@ -42,7 +44,8 @@ public class UserService {
     @Transactional
     public User update(User user) {
         User newUser = findById(user.getId());
-        newUser.setPassword(user.getPassword());
+        String encryptedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
+        newUser.setPassword(encryptedPassword);
         return userRepository.save(newUser);
     }
 
