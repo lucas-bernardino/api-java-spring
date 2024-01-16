@@ -2,7 +2,7 @@
 
 ### Esse projeto consiste de uma RESTful API utilizando Spring Boot. Há autorização e autenticação por token JWT, criptografia de senhas e conexão com o banco de dados PostgreSQL.
 
-## Instalação
+## Instalação sem docker
 
 1. Clone o repositório
 ```
@@ -25,6 +25,34 @@ spring.datasource.password=SUA_SENHA
 
 ```
 4. Inicie o projeto inicializando o arquivo *DemoApplication.java*
+
+5. A rota padrão para fazer as requições será http://localhost:8080
+
+## Instalação com docker
+
+1. Clone o repositório
+```
+git clone https://github.com/lucas-bernardino/api-java-spring.git
+```
+2. Entre na pasta clonada
+```
+cd api-java-spring
+```
+3. Certifique-se de não estar utilizando a porta `5432`
+```
+# Listar processo rodando na porta 5432
+sudo lsof -i :5432
+
+# Mate o processo substituindo <PID> com o seu processo
+sudo kill <PID>
+```
+
+4. Suba o container
+```
+docker-compose up
+```
+5. A rota padrão para fazer as requições será http://localhost:8081
+
 
 ## Estrutura do projeto
 
